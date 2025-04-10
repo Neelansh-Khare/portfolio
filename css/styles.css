@@ -102,10 +102,9 @@ nav {
     background: none;
     border: none;
     color: white;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     cursor: pointer;
-    z-index: 50;
-    padding: 5px;
+    z-index: 20;
 }
 
 .mobile-menu {
@@ -116,20 +115,16 @@ nav {
     width: 100%;
     height: 100%;
     background-color: rgba(10, 10, 20, 0.95);
-    z-index: 40;
+    z-index: 15;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
 }
 
 .mobile-menu .nav-link {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     padding: 15px 30px;
-    display: block;
-    width: 70%;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Specific styles for the main content area */
@@ -211,7 +206,6 @@ nav {
     color: white;
 }
 
-/* Hero content */
 .hero-title {
     font-size: 4rem;
     font-weight: 700;
@@ -229,11 +223,49 @@ nav {
     font-size: 1.1rem;
     max-width: 600px;
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* CTA buttons removed */
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    pointer-events: auto;
+}
+
+.cta-button {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cta-button.primary {
+    background: linear-gradient(90deg, #4284fd, #6b57ff);
+    color: white;
+    border: none;
+}
+
+.cta-button.secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button.primary:hover {
+    background: linear-gradient(90deg, #5090ff, #7c68ff);
+}
+
+.cta-button.secondary:hover {
+    border-color: white;
+}
 
 .skills-container {
     display: flex;
