@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neelansh Khare's Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <h1>Loading Portfolio</h1>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <div class="content">
+        <header>
+            <nav>
+                <div class="nav-logo">NK</div>
+                <div class="nav-links">
+                    <a class="nav-link" data-section="about">About</a>
+                    <a class="nav-link" data-section="experience">Experience</a>
+                    <a class="nav-link" data-section="projects">Projects</a>
+                    <a class="nav-link" data-section="skills">Skills</a>
+                    <a class="nav-link" data-section="contact">Contact</a>
+                </div>
+            </nav>
+        </header>
+        
+        <div class="main-content" id="mainContent">
+            <h1 class="hero-title">Neelansh Khare</h1>
+            <p class="hero-subtitle">Software Engineer & Machine Learning Enthusiast</p>
+            <p class="hero-description">
+                UC Irvine CS graduate with experience in software engineering, AI/ML research, and full-stack development. 
+                Passionate about creating innovative solutions using cutting-edge technologies.
+            </p>
+            <div class="cta-buttons">
+                <button class="cta-button primary" id="exploreBtn">Explore Portfolio</button>
+                <button class="cta-button secondary" id="contactBtn">Get In Touch</button>
+            </div>
+        </div>
+        
+        <div class="scene-controls">
+            <div class="scene-control" id="toggleAnimation" title="Toggle Animation">▶️</div>
+            <div class="scene-control" id="toggleParticles" title="Toggle Particles">✨</div>
+            <div class="scene-control" id="resetCamera" title="Reset Camera">🔄</div>
+        </div>
+        
+        <div class="particle-counter" id="particleCounter">
+            Particles: 5000
+        </div>
+    </div>
+    
+    <!-- About Section -->
+    <div class="section" id="aboutSection">
+        <button class="close-button">×</button>
+        <h2>About Me</h2>
+        <p style="line-height: 1.6; margin-bottom: 20px;">
+            I'm a Computer Science graduate from UC Irvine with a passion for software engineering, machine learning, and data science. 
+            My journey in tech has equipped me with a diverse skill set spanning from backend development to AI research.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 20px;">
+            I currently work as a Software Engineer at UC Irvine, where I develop automation systems and improve software infrastructure.
+            I'm also an Undergraduate Researcher at the He Lab, focusing on deep learning models for nano-particle motion prediction.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 20px;">
+            Beyond my technical skills, I'm an active leader in the community. I've served as the President for the Indian Subcontinental Club,
+            a Software Developer for ICSSC, and I'm involved with the Google Developer Student Club.
+        </p>
+        <p style="line-height: 1.6;">
+            I'm particularly interested in the intersection of AI/ML and practical applications, from automated trading systems to computer vision.
+            I enjoy tackling complex problems with innovative solutions that leverage cutting-edge technologies.
+        </p>
+    </div>
+    
+    <!-- Experience Section -->
+    <div class="section" id="experienceSection">
+        <button class="close-button">×</button>
+        <h2>Experience</h2>
+        
+        <div class="job-experience">
+            <h3 class="job-title">Software Engineer</h3>
+            <p class="job-company">University of California, Irvine</p>
+            <p class="job-period">June 2022 - Present</p>
+            <ul class="job-description">
+                <li>Developed and deployed a Java automation system for effort reporting, reducing processing time by 90% and eliminating manual data entry errors.</li>
+                <li>Architected a documentation generator using Java and RESTful APIs, helping with quicker onboarding.</li>
+                <li>Implemented and tested complex backend features for a financial aid portal using Java and JUnit, resulting in new features including faster data loading time by 30%.</li>
+                <li>Resolved frontend visual bugs and created a frontend testing framework using React and Playwright, fixing UI inconsistencies.</li>
+                <li>Designed and implemented a database anonymization application using Java and SQL, to ensure FERPA compliance.</li>
+                <li>Engineered JavaScript data processing scripts that created SQL queries automatically from an Excel sheet, saving hours for developers weekly.</li>
+            </ul>
+        </div>
+        
+        <div class="job-experience">
+            <h3 class="job-title">Undergraduate Researcher</h3>
+            <p class="job-company">He Lab, University of California, Irvine</p>
+            <p class="job-period">January 2024 - Present</p>
+            <ul class="job-description">
+                <li>Developed a deep-learning model using computer vision to predict nano-particle motion, enabling advancements in material science research (Pending paper publication).</li>
+                <li>Engineered and optimized a Python based CNN for electron microscopy analysis, achieving 95% accuracy in particle identification as well as developed my own scripts for data inference and preprocessing.</li>
+                <li>Created a synthetic data generation pipeline that can produce 10000+ realistic microscopy images, enabling robust model training and validation.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Projects Section -->
+    <div class="section" id="projectsSection">
+        <button class="close-button">×</button>
+        <h2>Projects</h2>
+        
+        <div class="project">
+            <h3 class="project-title">AI Based Stock Trading</h3>
+            <p class="project-tech">Python, REST APIs</p>
+            <ul class="project-description">
+                <li>Engineered an automated trading system utilizing Bard AI for market analysis and Schwab APIs for execution.</li>
+                <li>Implemented risk management algorithms with stop-loss mechanisms.</li>
+                <li>Developed real-time market monitoring system processing data from an exchange with sub-second latency.</li>
+            </ul>
+        </div>
+        
+        <div class="project">
+            <h3 class="project-title">Object Recognition Script</h3>
+            <p class="project-tech">Python, Matplotlib, OpenCV</p>
+            <ul class="project-description">
+                <li>Developed a real-time object detection system with 97% accuracy for household items using custom-trained CNN models.</li>
+                <li>Built a user-friendly GUI for real-time visualization and result logging using Matplotlib.</li>
+            </ul>
+        </div>
+        
+        <div class="project">
+            <h3 class="project-title">Python Based Discord Bots</h3>
+            <p class="project-tech">Python, REST APIs</p>
+            <ul class="project-description">
+                <li>Implemented competitive gaming features with PostgreSQL leaderboard system, driving 70% increase in user engagement.</li>
+                <li>Created automated moderation tools using natural language processing to maintain community guidelines.</li>
+                <li>Designed asynchronous event handling system for optimal performance during high-traffic periods.</li>
+            </ul>
+        </div>
+        
+        <div class="project">
+            <h3 class="project-title">Compiler and Interpreter</h3>
+            <p class="project-tech">Python</p>
+            <ul class="project-description">
+                <li>Built a fully-functional compiler/interpreter from scratch in Python that processed the low level language Tiny.</li>
+                <li>Implemented a lexer, parser, and the ability to add user defined functions and variables.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Skills Section -->
+    <div class="section" id="skillsSection">
+        <button class="close-button">×</button>
+        <h2>Skills & Technologies</h2>
+        
+        <div class="tech-stack">
+            <div class="tech-category">
+                <h3>Languages</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">C++</span>
+                    <span class="skill-tag">C</span>
+                    <span class="skill-tag">R</span>
+                    <span class="skill-tag">Go</span>
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h3>Frameworks & Technologies</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">TensorFlow</span>
+                    <span class="skill-tag">JUnit</span>
+                    <span class="skill-tag">RESTful APIs</span>
+                    <span class="skill-tag">OpenCV</span>
+                    <span class="skill-tag">Matplotlib</span>
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h3>Developer Tools</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">Playwright</span>
+                    <span class="skill-tag">PostgreSQL</span>
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h3>Areas of Expertise</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Computer Vision</span>
+                    <span class="skill-tag">Software Engineering</span>
+                    <span class="skill-tag">Full-Stack Development</span>
+                    <span class="skill-tag">Data Processing</span>
+                    <span class="skill-tag">Automation</span>
+                    <span class="skill-tag">Testing & QA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Section -->
+    <div class="section" id="contactSection">
+        <button class="close-button">×</button>
+        <h2>Contact</h2>
+        
+        <p style="margin-bottom: 20px;">
+            Feel free to reach out for collaboration opportunities, job inquiries, or just to say hello!
+        </p>
+        
+        <div class="contact-info">
+            <div class="contact-item">
+                <strong>Email:</strong>
+                <a href="mailto:kharen@uci.edu">kharen@uci.edu</a>
+            </div>
+            <div class="contact-item">
+                <strong>Phone:</strong>
+                <a href="tel:9499926803">949-992-6803</a>
+            </div>
+            <div class="contact-item">
+                <strong>LinkedIn:</strong>
+                <a href="https://linkedin.com/in/neelansh-khare" target="_blank">linkedin.com/in/neelansh-khare</a>
+            </div>
+            <div class="contact-item">
+                <strong>GitHub:</strong>
+                <a href="https://github.com/Neelansh-Khare" target="_blank">github.com/Neelansh-Khare</a>
+            </div>
+            <div class="contact-item">
+                <strong>Portfolio:</strong>
+                <a href="https://neelanshkhare.notion.site" target="_blank">neelanshkhare.notion.site</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/three-portfolio.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
