@@ -2,10 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neelansh Khare's Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Mobile Redirect Script -->
+    <script>
+        // Check if the device is mobile
+        function isMobileDevice() {
+            return (window.innerWidth <= 768 || 
+                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        }
+        
+        // Redirect mobile users to the mobile page
+        if (isMobileDevice()) {
+            window.location.href = "mobile-redirect.html";
+        }
+    </script>
 </head>
 <body>
     <div class="loading-screen" id="loadingScreen">
@@ -28,18 +42,8 @@
                     <a class="nav-link" data-section="skills">Skills</a>
                     <a class="nav-link" data-section="contact">Contact</a>
                 </div>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             </nav>
         </header>
-        
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
-            <a class="nav-link" data-section="about">About</a>
-            <a class="nav-link" data-section="experience">Experience</a>
-            <a class="nav-link" data-section="projects">Projects</a>
-            <a class="nav-link" data-section="skills">Skills</a>
-            <a class="nav-link" data-section="contact">Contact</a>
-        </div>
         
         <div class="main-content" id="mainContent">
             <h1 class="hero-title">Neelansh Khare</h1>
@@ -48,10 +52,7 @@
                 UC Irvine CS graduate with experience in software engineering, AI/ML research, and full-stack development. 
                 Passionate about creating innovative solutions using cutting-edge technologies.
             </p>
-            <div class="cta-buttons">
-                <button class="cta-button primary" id="exploreBtn">Explore Portfolio</button>
-                <button class="cta-button secondary" id="contactBtn">Get In Touch</button>
-            </div>
+            <!-- CTA buttons removed as requested -->
         </div>
         
         <div class="scene-controls">

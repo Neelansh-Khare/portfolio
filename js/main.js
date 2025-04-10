@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeButtons = document.querySelectorAll('.close-button');
     const mainContent = document.getElementById('mainContent');
     
-    const exploreBtn = document.getElementById('exploreBtn');
-    const contactBtn = document.getElementById('contactBtn');
+    // CTA buttons removed
     
     // Mobile menu elements
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -104,14 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // CTA buttons
-    exploreBtn.addEventListener('click', () => {
-        openSection('aboutSection');
-    });
-    
-    contactBtn.addEventListener('click', () => {
-        openSection('contactSection');
-    });
+    // CTA buttons removed
     
     // Add touch event listeners for better mobile experience
     document.addEventListener('touchstart', function(e) {
