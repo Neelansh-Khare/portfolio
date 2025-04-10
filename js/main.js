@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const exploreBtn = document.getElementById('exploreBtn');
     const contactBtn = document.getElementById('contactBtn');
     
+    // Mobile menu elements
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
     // Function to close all sections and show main content
     function closeAllSections() {
         sections.forEach(section => {
@@ -28,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-enable wheel events on the canvas
         const canvas = document.getElementById('canvas');
         canvas.style.pointerEvents = 'auto';
+        
+        // Close mobile menu if open
+        mobileMenu.classList.remove('active');
     }
     
     // Function to open a section and hide main content
@@ -65,11 +72,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { passive: true });
     }
     
-    // Setup section navigation
+    // Toggle mobile menu
+    mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('active');
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const isClickInsideMenu = mobileMenu.contains(event.target);
+        const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
+        
+        if (mobileMenu.classList.contains('active') && !isClickInsideMenu && !isClickOnMenuBtn) {
+            mobileMenu.classList.remove('active');
+        }
+    });
+    
+    // Setup section navigation for both desktop and mobile
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             const sectionId = link.getAttribute('data-section');
             openSection(`${sectionId}Section`);
+            
+            // Close mobile menu if open
+            mobileMenu.classList.remove('active');
         });
     });
     
@@ -86,5 +111,61 @@ document.addEventListener('DOMContentLoaded', function() {
     
     contactBtn.addEventListener('click', () => {
         openSection('contactSection');
+    });
+    
+    // Add touch event listeners for better mobile experience
+    document.addEventListener('touchstart', function(e) {
+        // Prevent default behavior for certain elements to improve touch response
+        if (e.target.classList.contains('nav-link') || 
+            e.target.classList.contains('cta-button') || 
+            e.target.classList.contains('close-button')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Detect mobile devices and optimize experience
+    function isMobileDevice() {
+        return (window.innerWidth <= 768 || 
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    }
+    
+    // Set initial mobile optimizations
+    if (isMobileDevice()) {
+        // Reduce particle count on mobile for better performance
+        const toggleParticlesBtn = document.getElementById('toggleParticles');
+        if (toggleParticlesBtn) {
+            // Trigger a click to reduce particles (assuming the first click reduces them)
+            toggleParticlesBtn.click();
+        }
+    }
+    
+    // Handle orientation change
+    window.addEventListener('orientationchange', function() {
+        // Delay execution to allow the browser to complete the orientation change
+        setTimeout(function() {
+            // Update any UI elements that need orientation-specific adjustments
+            if (window.orientation === 90 || window.orientation === -90) {
+                // Landscape mode
+                document.body.classList.add('landscape');
+                document.body.classList.remove('portrait');
+            } else {
+                // Portrait mode
+                document.body.classList.add('portrait');
+                document.body.classList.remove('landscape');
+            }
+        }, 300);
+    });
+    
+    // Ensure proper display on initial load
+    window.addEventListener('load', function() {
+        // Force a resize event to ensure everything is sized correctly
+        window.dispatchEvent(new Event('resize'));
+        
+        // Set initial orientation class
+        if (window.orientation === 90 || window.orientation === -90) {
+            document.body.classList.add('landscape');
+        } else {
+            document.body.classList.add('portrait');
+        }
     });
 });

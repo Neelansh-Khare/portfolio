@@ -13,6 +13,9 @@ class Portfolio {
         this.toggleParticlesBtn = document.getElementById('toggleParticles');
         this.resetCameraBtn = document.getElementById('resetCamera');
         
+        // Mobile detection
+        this.isMobile = this.detectMobile();
+        
         // Scene Setup
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -20,12 +23,12 @@ class Portfolio {
         
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
-            antialias: true,
+            antialias: !this.isMobile, // Disable antialiasing on mobile for better performance
             alpha: true
         });
         
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(this.isMobile ? 1 : Math.min(window.devicePixelRatio, 2)); // Lower pixel ratio on mobile
         
         // Portfolio Data (from your resume)
         this.portfolioData = {
@@ -80,7 +83,8 @@ class Portfolio {
         // Particles and Animation Properties
         this.particles = null;
         this.particlesData = [];
-        this.particleCount = 5000;
+        // Adjust particle count based on device
+        this.particleCount = this.isMobile ? 2000 : 5000;
         this.particleSystem = null;
         this.animationPaused = false;
         this.sceneObjects = [];
@@ -96,7 +100,11 @@ class Portfolio {
         this.targetCameraRotation = { x: 0, y: 0 };
         this.isPointerDown = false;
         this.pointerStart = { x: 0, y: 0 };
-        this.cameraDistance = 5;
+        this.cameraDistance = this.isMobile ? 6 : 5; // Farther camera distance on mobile for better view
+        
+        // Animation frame rate control for mobile
+        this.lastFrameTime = 0;
+        this.frameInterval = this.isMobile ? 40 : 16; // ~25fps on mobile, ~60fps on desktop
         
         // Initialize the Portfolio
         this.init();
@@ -104,11 +112,18 @@ class Portfolio {
         this.animate();
     }
     
+    detectMobile() {
+        return (
+            window.innerWidth <= 768 || 
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        );
+    }
+    
     init() {
         // Setup Camera
         this.camera.position.z = this.cameraDistance;
         
-        // Create Background
+        // Create Background (fewer stars on mobile)
         this.createBackground();
         
         // Create Skill Particles
@@ -119,6 +134,9 @@ class Portfolio {
         
         // Simulate Loading
         this.simulateLoading();
+        
+        // Update particle counter text
+        this.updateParticleCounterText();
     }
     
     createBackground() {
@@ -127,7 +145,10 @@ class Portfolio {
         const starPositions = [];
         const starColors = [];
         
-        for (let i = 0; i < 1000; i++) {
+        // Fewer stars on mobile
+        const starCount = this.isMobile ? 500 : 1000;
+        
+        for (let i = 0; i < starCount; i++) {
             const x = (Math.random() - 0.5) * 100;
             const y = (Math.random() - 0.5) * 100;
             const z = (Math.random() - 0.5) * 100;
@@ -146,7 +167,7 @@ class Portfolio {
         starsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
         
         const starsMaterial = new THREE.PointsMaterial({
-            size: 0.15,
+            size: this.isMobile ? 0.2 : 0.15, // Slightly larger stars on mobile for better visibility
             vertexColors: true,
             transparent: true,
             opacity: 0.8
@@ -188,7 +209,8 @@ class Portfolio {
                     positions[i3 + 2]
                 ),
                 lastUpdate: 0,
-                updateInterval: Math.random() * 2000 + 1000
+                // Slower updates on mobile for better performance
+                updateInterval: Math.random() * (this.isMobile ? 3000 : 2000) + (this.isMobile ? 2000 : 1000)
             });
             
             // Colors - use a gradient from blue to purple
@@ -203,245 +225,274 @@ class Portfolio {
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
             
-            // Sizes - slightly random
-            sizes[i] = Math.random() * 0.05 + 0.02;
+            // Sizes - slightly larger on mobile for better visibility
+            sizes[i] = Math.random() * (this.isMobile ? 0.07 : 0.05) + (this.isMobile ? 0.03 : 0.02);
         }
         
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
         
-        // Create shader material for better particles
-        const particlesMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0.0 }
-            },
-            vertexShader: `
-                attribute float size;
-                varying vec3 vColor;
-                uniform float time;
-                
-                void main() {
-                    vColor = color;
-                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_PointSize = size * (300.0 / -mvPosition.z);
-                    gl_Position = projectionMatrix * mvPosition;
-                }
-            `,
-            fragmentShader: `
-                varying vec3 vColor;
-                
-                void main() {
-                    if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.5) discard;
+        // Use simpler material on mobile for better performance
+        let particlesMaterial;
+        
+        if (this.isMobile) {
+            particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+        } else {
+            // Create shader material for better particles on desktop
+            particlesMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0.0 }
+                },
+                vertexShader: `
+                    attribute float size;
+                    varying vec3 vColor;
+                    uniform float time;
                     
-                    vec2 coord = gl_PointCoord - vec2(0.5);
-                    float dist = length(coord);
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
                     
-                    float alpha = 1.0 - smoothstep(0.4, 0.5, dist);
-                    gl_FragColor = vec4(vColor, alpha);
-                }
-            `,
-            transparent: true,
-            vertexColors: true,
-            depthWrite: false
-        });
+                    void main() {
+                        if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.5) discard;
+                        
+                        vec2 coord = gl_PointCoord - vec2(0.5);
+                        float dist = length(coord);
+                        
+                        float alpha = 1.0 - smoothstep(0.4, 0.5, dist);
+                        gl_FragColor = vec4(vColor, alpha);
+                    }
+                `,
+                transparent: true,
+                vertexColors: true,
+                depthWrite: false
+            });
+        }
         
         this.particles = new THREE.Points(particlesGeometry, particlesMaterial);
         this.scene.add(this.particles);
         
         // Update counter
+        this.updateParticleCounterText();
+    }
+    
+    updateParticleCounterText() {
         this.particleCounter.textContent = `Particles: ${this.particleCount}`;
     }
     
-    // Modify the createPortfolioVisualizations function in three-portfolio.js
-// Find this function and replace the code for creating lines with this updated version:
-
-createPortfolioVisualizations() {
-    // Create 3D objects to represent skills and projects
-    
-    // 1. Create a central node (representing you)
-    const nodeGeometry = new THREE.SphereGeometry(0.4, 32, 32);
-    const nodeMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x6b57ff,
-        transparent: true,
-        opacity: 0.8
-    });
-    
-    const centralNode = new THREE.Mesh(nodeGeometry, nodeMaterial);
-    centralNode.position.set(0, 0, 0);
-    centralNode.userData = {
-        type: 'central',
-        label: 'Neelansh Khare',
-        description: 'Software Engineer & ML Researcher'
-    };
-    
-    this.scene.add(centralNode);
-    this.sceneObjects.push(centralNode);
-    
-    // 2. Create skill nodes
-    const skillRadius = 3;
-    this.portfolioData.skills.forEach((skill, index) => {
-        const angle = (index / this.portfolioData.skills.length) * Math.PI * 2;
+    createPortfolioVisualizations() {
+        // Create 3D objects to represent skills and projects
         
-        // Position skill nodes in a circle
-        const x = Math.cos(angle) * skillRadius;
-        const y = Math.sin(angle) * skillRadius;
-        const z = (Math.random() - 0.5) * 2;
-        
-        // Size based on skill level
-        const size = 0.15 + skill.value * 0.2;
-        
-        const skillGeometry = new THREE.SphereGeometry(size, 16, 16);
-        const skillMaterial = new THREE.MeshBasicMaterial({
-            color: 0x4284fd,
+        // 1. Create a central node (representing you)
+        const nodeGeometry = new THREE.SphereGeometry(0.4, this.isMobile ? 16 : 32, this.isMobile ? 16 : 32);
+        const nodeMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x6b57ff,
             transparent: true,
             opacity: 0.8
         });
         
-        const skillNode = new THREE.Mesh(skillGeometry, skillMaterial);
-        skillNode.position.set(x, y, z);
-        skillNode.userData = {
-            type: 'skill',
-            name: skill.name,
-            value: skill.value,
-            description: `Proficiency: ${Math.round(skill.value * 100)}%`
+        const centralNode = new THREE.Mesh(nodeGeometry, nodeMaterial);
+        centralNode.position.set(0, 0, 0);
+        centralNode.userData = {
+            type: 'central',
+            label: 'Neelansh Khare',
+            description: 'Software Engineer & ML Researcher'
         };
         
-        this.scene.add(skillNode);
-        this.sceneObjects.push(skillNode);
+        this.scene.add(centralNode);
+        this.sceneObjects.push(centralNode);
         
-        // Create connection line to central node - FIX: Add minimum opacity
-        if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1) { // Avoid lines too close to center
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(x, y, z)
-            ]);
+        // 2. Create skill nodes - reduce number on mobile
+        const skillsToShow = this.isMobile ? 
+            this.portfolioData.skills.filter((_, idx) => idx % 2 === 0) : // Show only every other skill on mobile
+            this.portfolioData.skills;
             
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color: 0x6b57ff,
+        const skillRadius = this.isMobile ? 2.5 : 3;
+        
+        skillsToShow.forEach((skill, index) => {
+            const angle = (index / skillsToShow.length) * Math.PI * 2;
+            
+            // Position skill nodes in a circle
+            const x = Math.cos(angle) * skillRadius;
+            const y = Math.sin(angle) * skillRadius;
+            const z = (Math.random() - 0.5) * 2;
+            
+            // Size based on skill level
+            const size = 0.15 + skill.value * 0.2;
+            
+            const skillGeometry = new THREE.SphereGeometry(size, this.isMobile ? 8 : 16, this.isMobile ? 8 : 16);
+            const skillMaterial = new THREE.MeshBasicMaterial({
+                color: 0x4284fd,
                 transparent: true,
-                opacity: 0.1 // Reduced opacity to make lines less prominent
+                opacity: 0.8
             });
             
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            this.scene.add(line);
-        }
-    });
-    
-    // 3. Create project nodes
-    const projectRadius = 5;
-    this.portfolioData.projects.forEach((project, index) => {
-        const angle = (index / this.portfolioData.projects.length) * Math.PI * 2;
-        
-        // Position in 3D space
-        const x = Math.cos(angle) * projectRadius;
-        const z = Math.sin(angle) * projectRadius;
-        const y = (Math.random() - 0.5) * 3;
-        
-        // Size based on project complexity
-        const size = 0.2 + project.complexity * 0.3;
-        
-        // Create custom geometry for projects (cubes)
-        const projectGeometry = new THREE.BoxGeometry(size, size, size);
-        const projectMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff9d00,
-            transparent: true,
-            opacity: 0.8
+            const skillNode = new THREE.Mesh(skillGeometry, skillMaterial);
+            skillNode.position.set(x, y, z);
+            skillNode.userData = {
+                type: 'skill',
+                name: skill.name,
+                value: skill.value,
+                description: `Proficiency: ${Math.round(skill.value * 100)}%`
+            };
+            
+            this.scene.add(skillNode);
+            this.sceneObjects.push(skillNode);
+            
+            // Create connection line to central node - only if not mobile or if it's an important skill
+            if (!this.isMobile && (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1)) {
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(x, y, z)
+                ]);
+                
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0x6b57ff,
+                    transparent: true,
+                    opacity: 0.1
+                });
+                
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                this.scene.add(line);
+            }
         });
         
-        const projectNode = new THREE.Mesh(projectGeometry, projectMaterial);
-        projectNode.position.set(x, y, z);
-        projectNode.rotation.set(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-        );
-        projectNode.userData = {
-            type: 'project',
-            name: project.name,
-            tech: project.tech,
-            complexity: project.complexity,
-            description: `Technologies: ${project.tech.join(', ')}`
-        };
-        
-        this.scene.add(projectNode);
-        this.sceneObjects.push(projectNode);
-        
-        // Create connection to central node - FIX: Add minimum distance check and reduce opacity
-        if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1) { // Avoid lines too close to center
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(x, y, z)
-            ]);
+        // 3. Create project nodes - reduce number on mobile
+        const projectsToShow = this.isMobile ? 
+            this.portfolioData.projects.slice(0, 3) : // Show only first 3 projects on mobile
+            this.portfolioData.projects;
             
-            const lineMaterial = new THREE.LineBasicMaterial({
+        const projectRadius = this.isMobile ? 4 : 5;
+        
+        projectsToShow.forEach((project, index) => {
+            const angle = (index / projectsToShow.length) * Math.PI * 2;
+            
+            // Position in 3D space
+            const x = Math.cos(angle) * projectRadius;
+            const z = Math.sin(angle) * projectRadius;
+            const y = (Math.random() - 0.5) * (this.isMobile ? 2 : 3);
+            
+            // Size based on project complexity
+            const size = 0.2 + project.complexity * 0.3;
+            
+            // Create custom geometry for projects (cubes) - simpler on mobile
+            const projectGeometry = new THREE.BoxGeometry(size, size, size);
+            const projectMaterial = new THREE.MeshBasicMaterial({
                 color: 0xff9d00,
                 transparent: true,
-                opacity: 0.1 // Reduced opacity to make lines less prominent
+                opacity: 0.8
             });
             
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            this.scene.add(line);
-        }
-    });
-    
-    // 4. Create experience nodes
-    const experienceRadius = 4;
-    this.portfolioData.experience.forEach((exp, index) => {
-        const angle = (index / this.portfolioData.experience.length) * Math.PI;
-        
-        // Position using angle
-        const x = Math.cos(angle) * experienceRadius;
-        const z = Math.sin(angle) * experienceRadius;
-        const y = -2 + (Math.random() - 0.5);
-        
-        // Size based on duration
-        const size = 0.2 + (exp.duration / 24) * 0.4; // Scale based on years
-        
-        // Create cylinder for experience
-        const expGeometry = new THREE.CylinderGeometry(size, size, 0.5, 32);
-        const expMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00cc88,
-            transparent: true,
-            opacity: 0.8
+            const projectNode = new THREE.Mesh(projectGeometry, projectMaterial);
+            projectNode.position.set(x, y, z);
+            projectNode.rotation.set(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+            projectNode.userData = {
+                type: 'project',
+                name: project.name,
+                tech: project.tech,
+                complexity: project.complexity,
+                description: `Technologies: ${project.tech.join(', ')}`
+            };
+            
+            this.scene.add(projectNode);
+            this.sceneObjects.push(projectNode);
+            
+            // Create connection to central node - only if not mobile
+            if (!this.isMobile && (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1)) {
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(x, y, z)
+                ]);
+                
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0xff9d00,
+                    transparent: true,
+                    opacity: 0.1
+                });
+                
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                this.scene.add(line);
+            }
         });
         
-        const expNode = new THREE.Mesh(expGeometry, expMaterial);
-        expNode.position.set(x, y, z);
-        expNode.userData = {
-            type: 'experience',
-            title: exp.title,
-            company: exp.company,
-            period: exp.period,
-            description: `${exp.title} at ${exp.company}\n${exp.period}`
-        };
-        
-        this.scene.add(expNode);
-        this.sceneObjects.push(expNode);
-        
-        // Create connection to central node - FIX: Add minimum distance check and reduce opacity
-        if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1) { // Avoid lines too close to center
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(x, y, z)
-            ]);
+        // 4. Create experience nodes - show all on mobile and desktop
+        const experienceRadius = this.isMobile ? 3.5 : 4;
+        this.portfolioData.experience.forEach((exp, index) => {
+            const angle = (index / this.portfolioData.experience.length) * Math.PI;
             
-            const lineMaterial = new THREE.LineBasicMaterial({
+            // Position using angle
+            const x = Math.cos(angle) * experienceRadius;
+            const z = Math.sin(angle) * experienceRadius;
+            const y = -2 + (Math.random() - 0.5);
+            
+            // Size based on duration
+            const size = 0.2 + (exp.duration / 24) * 0.4; // Scale based on years
+            
+            // Create cylinder for experience - simpler on mobile
+            const expGeometry = new THREE.CylinderGeometry(
+                size, size, 0.5, 
+                this.isMobile ? 16 : 32
+            );
+            const expMaterial = new THREE.MeshBasicMaterial({
                 color: 0x00cc88,
                 transparent: true,
-                opacity: 0.1 // Reduced opacity to make lines less prominent
+                opacity: 0.8
             });
             
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            this.scene.add(line);
-        }
-    });
-}
+            const expNode = new THREE.Mesh(expGeometry, expMaterial);
+            expNode.position.set(x, y, z);
+            expNode.userData = {
+                type: 'experience',
+                title: exp.title,
+                company: exp.company,
+                period: exp.period,
+                description: `${exp.title} at ${exp.company}\n${exp.period}`
+            };
+            
+            this.scene.add(expNode);
+            this.sceneObjects.push(expNode);
+            
+            // Create connection to central node - only if not mobile
+            if (!this.isMobile && (Math.abs(x) > 0.1 || Math.abs(y) > 0.1 || Math.abs(z) > 0.1)) {
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(x, y, z)
+                ]);
+                
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0x00cc88,
+                    transparent: true,
+                    opacity: 0.1
+                });
+                
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                this.scene.add(line);
+            }
+        });
+    }
     
     simulateLoading() {
+        // Faster loading on mobile
+        const loadingSpeed = this.isMobile ? 15 : 10;
+        
         let progress = 0;
         const loadingInterval = setInterval(() => {
-            progress += Math.random() * 10;
+            progress += Math.random() * loadingSpeed;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(loadingInterval);
@@ -452,12 +503,12 @@ createPortfolioVisualizations() {
                     setTimeout(() => {
                         this.loadingScreen.style.display = 'none';
                         this.mainContent.classList.add('visible');
-                    }, 1000);
-                }, 500);
+                    }, this.isMobile ? 500 : 1000);
+                }, this.isMobile ? 300 : 500);
             }
             
             this.loadingBar.style.width = `${progress}%`;
-        }, 200);
+        }, this.isMobile ? 150 : 200);
     }
     
     setupEventListeners() {
@@ -471,8 +522,8 @@ createPortfolioVisualizations() {
         window.addEventListener('wheel', (event) => this.onMouseWheel(event));
         
         // Touch events for mobile
-        window.addEventListener('touchstart', (event) => this.onTouchStart(event));
-        window.addEventListener('touchmove', (event) => this.onTouchMove(event));
+        window.addEventListener('touchstart', (event) => this.onTouchStart(event), { passive: true });
+        window.addEventListener('touchmove', (event) => this.onTouchMove(event), { passive: true });
         window.addEventListener('touchend', () => this.onTouchEnd());
         
         // UI Controls
@@ -482,12 +533,54 @@ createPortfolioVisualizations() {
         
         // Object clicking
         window.addEventListener('click', (event) => this.onObjectClick(event));
+        
+        // Orientation change event (mobile)
+        window.addEventListener('orientationchange', () => this.onOrientationChange());
+        
+        // Visibility change (save resources when tab is not active)
+        document.addEventListener('visibilitychange', () => this.onVisibilityChange());
     }
     
     onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Update mobile status
+        this.isMobile = this.detectMobile();
+        
+        // Adjust renderer settings for performance when resizing
+        if (this.isMobile) {
+            this.renderer.setPixelRatio(1);
+        } else {
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }
+    }
+    
+    onOrientationChange() {
+        // Delay execution to allow orientation change to complete
+        setTimeout(() => {
+            this.onWindowResize();
+            
+            // Additional orientation-specific adjustments can be made here
+            if (window.orientation === 90 || window.orientation === -90) {
+                // Landscape mode adjustments
+                this.cameraDistance = 7;
+            } else {
+                // Portrait mode adjustments
+                this.cameraDistance = 6;
+            }
+        }, 300);
+    }
+    
+    onVisibilityChange() {
+        if (document.hidden) {
+            // Page is not visible, pause animations to save resources
+            this.animationPaused = true;
+        } else {
+            // Page is visible again, resume animations
+            this.animationPaused = false;
+        }
     }
     
     onMouseMove(event) {
@@ -534,22 +627,33 @@ createPortfolioVisualizations() {
             this.isPointerDown = true;
             this.pointerStart.x = event.touches[0].clientX;
             this.pointerStart.y = event.touches[0].clientY;
+            
+            // For mobile: update mouse position for raycasting
+            this.mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
         }
     }
     
     onTouchMove(event) {
         if (this.isPointerDown && event.touches.length === 1) {
-            const deltaX = event.touches[0].clientX - this.pointerStart.x;
-            const deltaY = event.touches[0].clientY - this.pointerStart.y;
+            const touch = event.touches[0];
+            const deltaX = touch.clientX - this.pointerStart.x;
+            const deltaY = touch.clientY - this.pointerStart.y;
             
-            this.targetCameraRotation.y += deltaX * 0.002;
-            this.targetCameraRotation.x += deltaY * 0.002;
+            // Make rotation faster on mobile for better usability
+            const sensitivity = 0.003;
+            this.targetCameraRotation.y += deltaX * sensitivity;
+            this.targetCameraRotation.x += deltaY * sensitivity;
             
             // Limit vertical rotation
             this.targetCameraRotation.x = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, this.targetCameraRotation.x));
             
-            this.pointerStart.x = event.touches[0].clientX;
-            this.pointerStart.y = event.touches[0].clientY;
+            this.pointerStart.x = touch.clientX;
+            this.pointerStart.y = touch.clientY;
+            
+            // Update mouse for raycasting on mobile
+            this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
         }
     }
     
@@ -563,13 +667,25 @@ createPortfolioVisualizations() {
     }
     
     toggleParticleCount() {
-        // Toggle between particle counts
-        if (this.particleCount === 5000) {
-            this.particleCount = 10000;
-        } else if (this.particleCount === 10000) {
-            this.particleCount = 2000;
+        // Different particle count options for mobile vs desktop
+        if (this.isMobile) {
+            // Mobile particle count options
+            if (this.particleCount === 2000) {
+                this.particleCount = 1000;
+            } else if (this.particleCount === 1000) {
+                this.particleCount = 500;
+            } else {
+                this.particleCount = 2000;
+            }
         } else {
-            this.particleCount = 5000;
+            // Desktop particle count options
+            if (this.particleCount === 5000) {
+                this.particleCount = 10000;
+            } else if (this.particleCount === 10000) {
+                this.particleCount = 2000;
+            } else {
+                this.particleCount = 5000;
+            }
         }
         
         // Remove old particles
@@ -585,44 +701,51 @@ createPortfolioVisualizations() {
     resetCamera() {
         this.targetCameraRotation.x = 0;
         this.targetCameraRotation.y = 0;
-        this.cameraDistance = 5;
+        this.cameraDistance = this.isMobile ? 6 : 5;
     }
     
     onObjectClick(event) {
-    // Cast ray from mouse position to detect object clicks
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersects = this.raycaster.intersectObjects(this.sceneObjects, true);
-    
-    if (intersects.length > 0) {
-        const object = intersects[0].object;
-        const mainContent = document.getElementById('mainContent');
+        // Cast ray from mouse position to detect object clicks
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.sceneObjects);
         
-        // Close all sections first
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Hide the main content
-        mainContent.style.display = 'none';
-        
-        // Lock background scrolling
-        document.body.style.overflow = 'hidden';
-        
-        // Then open the appropriate section
-        if (object.userData.type === 'skill') {
-            document.getElementById('skillsSection').classList.add('active');
-        } else if (object.userData.type === 'project') {
-            document.getElementById('projectsSection').classList.add('active');
-        } else if (object.userData.type === 'experience') {
-            document.getElementById('experienceSection').classList.add('active');
-        } else if (object.userData.type === 'central') {
-            document.getElementById('aboutSection').classList.add('active');
+        // Check if we hit any object
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            const mainContent = document.getElementById('mainContent');
+            
+            // Close all sections first
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Hide the main content
+            mainContent.style.display = 'none';
+            
+            // Lock background scrolling
+            document.body.style.overflow = 'hidden';
+            
+            // Then open the appropriate section
+            if (object.userData.type === 'skill') {
+                document.getElementById('skillsSection').classList.add('active');
+            } else if (object.userData.type === 'project') {
+                document.getElementById('projectsSection').classList.add('active');
+            } else if (object.userData.type === 'experience') {
+                document.getElementById('experienceSection').classList.add('active');
+            } else if (object.userData.type === 'central') {
+                document.getElementById('aboutSection').classList.add('active');
+            }
+            
+            // Add class to body to disable canvas events
+            document.body.classList.add('overlay-active');
         }
     }
-}
     
     checkIntersection() {
+        // Skip on mobile for better performance
+        if (this.isMobile && !this.isPointerDown) return;
+        
         // Raycast for object hover effects and tooltips
         this.raycaster.setFromCamera(this.mouse, this.camera);
         const intersects = this.raycaster.intersectObjects(this.sceneObjects);
@@ -648,7 +771,7 @@ createPortfolioVisualizations() {
             const y = -(vector.y * 0.5 - 0.5) * window.innerHeight;
             
             this.tooltip.style.left = `${x}px`;
-            this.tooltip.style.top = `${y - 50}px`;
+            this.tooltip.style.top = `${y - (this.isMobile ? 30 : 50)}px`;
             
             // Highlight object
             object.material.opacity = 1;
@@ -668,8 +791,14 @@ createPortfolioVisualizations() {
         const time = Date.now();
         const positions = this.particles.geometry.attributes.position.array;
         
+        // On mobile, only update a subset of particles per frame for better performance
+        const updateCount = this.isMobile ? Math.floor(this.particleCount / 5) : this.particleCount;
+        const startIndex = this.isMobile ? Math.floor(Math.random() * (this.particleCount - updateCount)) : 0;
+        
         // Update particles position with animations
-        for (let i = 0; i < this.particleCount; i++) {
+        for (let i = startIndex; i < startIndex + updateCount; i++) {
+            if (i >= this.particleCount) break;
+            
             const i3 = i * 3;
             const data = this.particlesData[i];
             
@@ -681,7 +810,7 @@ createPortfolioVisualizations() {
                     (Math.random() - 0.5) * 8
                 );
                 data.lastUpdate = time;
-                data.updateInterval = Math.random() * 2000 + 1000;
+                data.updateInterval = Math.random() * (this.isMobile ? 3000 : 2000) + (this.isMobile ? 2000 : 1000);
             }
             
             // Move towards target position
@@ -695,7 +824,7 @@ createPortfolioVisualizations() {
             const direction = new THREE.Vector3().subVectors(data.targetPosition, currentPosition);
             
             if (direction.length() > 0.1) {
-                direction.normalize().multiplyScalar(0.01);
+                direction.normalize().multiplyScalar(this.isMobile ? 0.007 : 0.01);
                 
                 positions[i3] += direction.x;
                 positions[i3 + 1] += direction.y;
@@ -706,15 +835,17 @@ createPortfolioVisualizations() {
         this.particles.geometry.attributes.position.needsUpdate = true;
         
         // Update shader time uniform if it exists
-        if (this.particles.material.uniforms && this.particles.material.uniforms.time) {
+        if (!this.isMobile && this.particles.material.uniforms && this.particles.material.uniforms.time) {
             this.particles.material.uniforms.time.value = time * 0.001;
         }
     }
     
     updateCamera() {
-        // Smooth camera rotation
-        this.cameraRotation.x += (this.targetCameraRotation.x - this.cameraRotation.x) * 0.05;
-        this.cameraRotation.y += (this.targetCameraRotation.y - this.cameraRotation.y) * 0.05;
+        // Smooth camera rotation - less smoothing on mobile for more responsive feel
+        const smoothFactor = this.isMobile ? 0.1 : 0.05;
+        
+        this.cameraRotation.x += (this.targetCameraRotation.x - this.cameraRotation.x) * smoothFactor;
+        this.cameraRotation.y += (this.targetCameraRotation.y - this.cameraRotation.y) * smoothFactor;
         
         // Calculate camera position based on rotation and distance
         const x = Math.sin(this.cameraRotation.y) * Math.cos(this.cameraRotation.x) * this.cameraDistance;
@@ -726,29 +857,42 @@ createPortfolioVisualizations() {
     }
     
     updateSceneObjects() {
-        // Animate scene objects
+        // Skip if animation is paused
         if (this.animationPaused) return;
+        
+        // On mobile, update objects less frequently for better performance
+        const slowdownFactor = this.isMobile ? 0.5 : 1;
         
         this.sceneObjects.forEach(object => {
             if (object.userData.type === 'project') {
                 // Rotate project cubes
-                object.rotation.x += 0.005;
-                object.rotation.y += 0.005;
+                object.rotation.x += 0.005 * slowdownFactor;
+                object.rotation.y += 0.005 * slowdownFactor;
             } else if (object.userData.type === 'skill') {
                 // Gentle pulsing for skill nodes
-                object.scale.x = object.scale.y = object.scale.z = 1 + Math.sin(Date.now() * 0.002) * 0.1;
+                object.scale.x = object.scale.y = object.scale.z = 1 + Math.sin(Date.now() * 0.001 * slowdownFactor) * 0.1;
             } else if (object.userData.type === 'experience') {
                 // Gentle rotation for experience cylinders
-                object.rotation.y += 0.01;
+                object.rotation.y += 0.01 * slowdownFactor;
             } else if (object.userData.type === 'central') {
                 // Pulse the central node
-                object.scale.x = object.scale.y = object.scale.z = 1 + Math.sin(Date.now() * 0.001) * 0.2;
+                object.scale.x = object.scale.y = object.scale.z = 1 + Math.sin(Date.now() * 0.0005 * slowdownFactor) * 0.2;
             }
         });
     }
     
     animate() {
         requestAnimationFrame(() => this.animate());
+        
+        // Frame rate limiting especially on mobile
+        const now = performance.now();
+        const elapsed = now - this.lastFrameTime;
+        
+        if (elapsed < this.frameInterval) {
+            return;
+        }
+        
+        this.lastFrameTime = now - (elapsed % this.frameInterval);
         
         // Update camera position
         this.updateCamera();

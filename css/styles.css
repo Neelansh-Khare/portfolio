@@ -96,6 +96,37 @@ nav {
     background: rgba(255, 255, 255, 0.1);
 }
 
+/* Mobile navigation menu */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 20;
+}
+
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 20, 0.95);
+    z-index: 15;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.mobile-menu .nav-link {
+    font-size: 1.2rem;
+    padding: 15px 30px;
+}
+
 /* Specific styles for the main content area */
 .main-content {
     display: flex;
@@ -297,7 +328,7 @@ nav {
     display: flex;
     gap: 15px;
     pointer-events: auto;
-    z-index: 10;
+    z-index: 20; /* Increased z-index to be higher than mobile menu */
 }
 
 .scene-control {
@@ -318,30 +349,6 @@ nav {
 .scene-control:hover {
     background: rgba(106, 87, 255, 0.3);
     transform: scale(1.1);
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .nav-links {
-        display: none;
-    }
-    
-    .section {
-        width: 95%;
-        padding: 20px;
-    }
-    
-    .cta-buttons {
-        flex-direction: column;
-    }
 }
 
 /* Custom scrollbar */
@@ -394,8 +401,6 @@ nav {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Add these styles to your styles.css file */
-
 /* Ensure sections have proper overflow handling */
 .section {
     position: fixed;
@@ -429,26 +434,152 @@ nav {
     pointer-events: auto;
 }
 
-/* Improve scrollbar appearance */
-.section::-webkit-scrollbar {
-    width: 8px;
-}
-
-.section::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.section::-webkit-scrollbar-thumb {
-    background: rgba(106, 87, 255, 0.5);
-    border-radius: 10px;
-}
-
-.section::-webkit-scrollbar-thumb:hover {
-    background: rgba(106, 87, 255, 0.8);
-}
-
 /* When overlay is active, disable pointer events on canvas */
 body.overlay-active #canvas {
     pointer-events: none;
+}
+
+/* Ensure 3D objects remain clickable when no overlay is active */
+#canvas {
+    pointer-events: auto !important;
+}
+
+/* IMPROVED MOBILE STYLES */
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+    }
+    
+    /* Hide desktop navigation and show mobile menu button */
+    .nav-links {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .mobile-menu.active {
+        display: flex;
+    }
+    
+    /* Hero content adjustments */
+    .hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+    
+    /* CTA buttons for mobile */
+    .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .cta-button {
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    /* Section adjustments */
+    .section {
+        width: 95%;
+        padding: 25px 20px;
+        max-height: 85vh;
+    }
+    
+    .section h2 {
+        font-size: 1.8rem;
+    }
+    
+    /* Adjust scene controls positioning */
+    .scene-controls {
+        bottom: 20px;
+        right: 20px;
+        gap: 10px;
+    }
+    
+    .scene-control {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .particle-counter {
+        bottom: 20px;
+        left: 20px;
+        font-size: 0.8rem;
+    }
+    
+    /* Adjust contact info for mobile */
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    /* Adjust tooltip for mobile */
+    .tooltip {
+        max-width: 150px;
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    /* Additional spacing for touch targets */
+    .job-description li, .project-description li {
+        margin-bottom: 15px;
+    }
+    
+    .skill-tag {
+        margin-bottom: 5px;
+    }
+}
+
+/* Specific adjustments for very small screens */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .main-content {
+        padding: 0 5%;
+    }
+    
+    .section {
+        padding: 20px 15px;
+    }
+}
+
+/* Portrait orientation adjustments for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .hero-subtitle {
+        margin-bottom: 15px;
+    }
+    
+    .hero-description {
+        margin-bottom: 20px;
+    }
+    
+    .section {
+        max-height: 80vh;
+    }
 }
