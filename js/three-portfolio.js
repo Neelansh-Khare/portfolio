@@ -343,8 +343,7 @@ class Portfolio {
             skillNode.userData = {
                 type: 'skill',
                 name: skill.name,
-                value: skill.value,
-                description: `Proficiency: ${Math.round(skill.value * 100)}%`
+                description: ""
             };
             
             this.scene.add(skillNode);

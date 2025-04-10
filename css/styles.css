@@ -613,3 +613,50 @@ body.overlay-active #canvas {
         text-align: center;
     }
 }
+
+/* Education Section Styles */
+.education-experience {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.education-title {
+    font-size: 1.4rem;
+    color: #6b57ff;
+    margin-bottom: 10px;
+}
+
+.education-degree {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 5px;
+}
+
+.education-period {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 15px;
+}
+
+.education-details {
+    margin-top: 20px;
+}
+
+.education-details h4 {
+    font-size: 1.1rem;
+    color: #6b57ff;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.education-activities {
+    list-style-type: disc;
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+.education-activities li {
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
