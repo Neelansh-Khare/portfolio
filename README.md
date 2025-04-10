@@ -42,34 +42,6 @@ An interactive 3D portfolio website built with Three.js that showcases my skills
 
 3. Open your browser and navigate to `http://localhost:8000` (or whichever port your server provides)
 
-### Deploying to GitHub Pages
-
-1. Create a GitHub repository for your portfolio
-
-2. Initialize git in your project folder (if not already done):
-   ```
-   git init
-   git add .
-   git commit -m "Initial commit"
-   ```
-
-3. Add your remote repository:
-   ```
-   git remote add origin https://github.com/Neelansh-Khare/portfolio.git
-   ```
-
-4. Push to GitHub:
-   ```
-   git push -u origin master
-   ```
-
-5. Enable GitHub Pages:
-   - Go to your repository on GitHub
-   - Navigate to Settings > Pages
-   - Select the branch you want to deploy (usually `master` or `main`)
-   - Click Save
-
-Your portfolio will be available at `https://neelansh-khare.github.io/portfolio/`
 
 ## Customization
 
