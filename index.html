@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Neelansh Khare's Portfolio</title>
+    
+    <!-- Mobile Redirect Script -->
+    <script>
+    (function() {
+      // Function to detect mobile devices
+      function isMobileDevice() {
+        return (
+          window.innerWidth <= 768 || 
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        );
+      }
+      
+      // Check if it's a mobile device and redirect if needed
+      if (isMobileDevice() && !window.location.pathname.includes('mobile-redirect.html')) {
+        window.location.href = 'mobile-redirect.html';
+      }
+    })();
+    </script>
+    <!-- End Mobile Redirect Script -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -48,10 +68,6 @@
                 UC Irvine CS graduate with experience in software engineering, AI/ML research, and full-stack development. 
                 Passionate about creating innovative solutions using cutting-edge technologies.
             </p>
-            <div class="cta-buttons">
-                <button class="cta-button primary" id="exploreBtn">Explore Portfolio</button>
-                <button class="cta-button secondary" id="contactBtn">Get In Touch</button>
-            </div>
         </div>
         
         <div class="scene-controls">
