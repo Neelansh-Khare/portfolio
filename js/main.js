@@ -93,8 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const sectionId = link.getAttribute('data-section');
             openSection(`${sectionId}Section`);
             
-            // Close mobile menu if open
-            mobileMenu.classList.remove('active');
+            if (isMobileDevice()) {
+            // Redirect to Notion instead of opening section
+            window.location.href = "https://neelanshkhare.notion.site";
+            } else {
+                openSection(`${sectionId}Section`);
+                // Close mobile menu if open
+                mobileMenu.classList.remove('active');
+            }
         });
     });
     
@@ -106,11 +112,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // CTA buttons
     exploreBtn.addEventListener('click', () => {
-        openSection('aboutSection');
+        if (isMobileDevice()) {
+            window.location.href = "https://neelanshkhare.notion.site";
+        } else {
+            openSection('aboutSection');
+        }
     });
-    
+
     contactBtn.addEventListener('click', () => {
-        openSection('contactSection');
+        if (isMobileDevice()) {
+            window.location.href = "https://neelanshkhare.notion.site";
+        } else {
+            openSection('contactSection');
+        }
     });
     
     // Add touch event listeners for better mobile experience
