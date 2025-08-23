@@ -87,20 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Setup section navigation for both desktop and mobile
+    // Setup section navigation - REMOVED mobile redirect logic
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             const sectionId = link.getAttribute('data-section');
             openSection(`${sectionId}Section`);
-            
-            if (isMobileDevice()) {
-            // Redirect to Notion instead of opening section
-            window.location.href = "https://neelanshkhare.notion.site";
-            } else {
-                openSection(`${sectionId}Section`);
-                // Close mobile menu if open
-                mobileMenu.classList.remove('active');
-            }
+            // Close mobile menu if open
+            mobileMenu.classList.remove('active');
         });
     });
     
@@ -110,21 +103,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // CTA buttons
+    // CTA buttons - REMOVED mobile redirect logic
     exploreBtn.addEventListener('click', () => {
-        if (isMobileDevice()) {
-            window.location.href = "https://neelanshkhare.notion.site";
-        } else {
-            openSection('aboutSection');
-        }
+        openSection('aboutSection');
     });
 
     contactBtn.addEventListener('click', () => {
-        if (isMobileDevice()) {
-            window.location.href = "https://neelanshkhare.notion.site";
-        } else {
-            openSection('contactSection');
-        }
+        openSection('contactSection');
     });
     
     // Add touch event listeners for better mobile experience
@@ -137,13 +122,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, { passive: false });
     
-    // Detect mobile devices and optimize experience
+    // Detect mobile devices for performance optimizations only
     function isMobileDevice() {
         return (window.innerWidth <= 768 || 
                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     }
     
-    // Set initial mobile optimizations
+    // Set initial mobile optimizations (performance only, no redirects)
     if (isMobileDevice()) {
         // Reduce particle count on mobile for better performance
         const toggleParticlesBtn = document.getElementById('toggleParticles');
