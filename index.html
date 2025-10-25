@@ -29,7 +29,7 @@
       // Check if it's a mobile device and redirect immediately
       if (isMobileDevice() && !window.location.search.includes('desktop=true')) {
         // Redirect directly to Notion instead of mobile-redirect.html
-        window.location.replace('https://neelanshkhare.notion.site');
+        window.location.replace('https://neelanshkhare.notion.site/portfolio');
       }
     })();
     </script>
@@ -103,20 +103,16 @@
         <button class="close-button">×</button>
         <h2>About Me</h2>
         <p style="line-height: 1.6; margin-bottom: 20px;">
-            I'm a Computer Science graduate from UC Irvine with a passion for software engineering, machine learning, and data science. 
-            My journey in tech has equipped me with a diverse skill set spanning from backend development to AI research.
+            Hi, I’m <strong>Neelansh Khare (CS @ UCI CO’25)</strong> — a Software Engineer passionate about building intelligent, scalable systems that merge engineering precision with real-world impact.
         </p>
         <p style="line-height: 1.6; margin-bottom: 20px;">
-            I currently work as a Software Engineer at UC Irvine, where I develop automation systems and improve software infrastructure.
-            I'm also an Undergraduate Researcher at the He Lab, focusing on deep learning models for nano-particle motion prediction.
+            My technical experience spans <strong>backend engineering, distributed systems, and AI/ML</strong>, shaped through roles at <strong>Polaris Wireless</strong>, <strong>UC Irvine’s Office of Information Technology</strong>, and <strong>He Lab</strong>, along with founding engineer work at <strong>NeuraCities</strong>, an AI startup focused on automating RFP discovery using LLM-driven infrastructure.
         </p>
         <p style="line-height: 1.6; margin-bottom: 20px;">
-            Beyond my technical skills, I'm an active leader in the community. I've served as the President for the Indian Subcontinental Club,
-            a Software Developer for ICSSC, and I'm involved with the Google Developer Student Club.
+            I’ve designed <strong>CI/CD pipelines</strong>, built <strong>internal developer tools</strong>, contributed to <strong>core enterprise features</strong>, and developed <strong>deep learning pipelines</strong> for scientific research — experiences that taught me how to move seamlessly from low-level systems design to production-scale deployment.
         </p>
         <p style="line-height: 1.6;">
-            I'm particularly interested in the intersection of AI/ML and practical applications, from automated trading systems to computer vision.
-            I enjoy tackling complex problems with innovative solutions that leverage cutting-edge technologies.
+            I thrive in fast-moving environments where curiosity, problem-solving, and long-term impact meet. My mission is to <strong>build software that endures — systems that automate, empower, and scale intelligently.</strong>
         </p>
     </div>
     
@@ -124,32 +120,56 @@
     <div class="section" id="experienceSection">
         <button class="close-button">×</button>
         <h2>Experience</h2>
-        
+
         <div class="job-experience">
-            <h3 class="job-title">Software Engineer Intern</h3>
-            <p class="job-company">University of California, Irvine</p>
-            <p class="job-period">June 2022 - June 2025</p>
+            <h3 class="job-title">Software Engineer</h3>
+            <p class="job-company">Polaris Wireless — Santa Clara, CA</p>
+            <p class="job-period">Sept 2025 – Present</p>
             <ul class="job-description">
-                <li>Developed and deployed a Java automation system for effort reporting, reducing processing time by 90% and eliminating manual data entry errors.</li>
-                <li>Architected a documentation generator using Java and RESTful APIs, helping with quicker onboarding.</li>
-                <li>Implemented and tested complex backend features for a financial aid portal using Java and JUnit, resulting in new features including faster data loading time by 30%.</li>
-                <li>Resolved frontend visual bugs and created a frontend testing framework using React and Playwright, fixing UI inconsistencies.</li>
-                <li>Designed and implemented a database anonymization application using Java and SQL, to ensure FERPA compliance.</li>
-                <li>Engineered JavaScript data processing scripts that created SQL queries automatically from an Excel sheet, saving hours for developers weekly.</li>
+                <li>Automating CI/CD pipeline with Python, Apache Ant, Jenkins, and shell scripting, improving reliability.</li>
+                <li>Engineering LLM-based features for core enterprise applications to enhance customer experience.</li>
             </ul>
         </div>
-        
+
+        <div class="job-experience">
+            <h3 class="job-title">Early Engineer</h3>
+            <p class="job-company">NeuraCities — Startup | Aug 2025 – Present</p>
+            <ul class="job-description">
+                <li>Took ownership of infrastructure in a 2-person engineering team, driving core product development.</li>
+                <li>Constructed Python-based scraping pipeline, collecting data from 100+ government sources daily.</li>
+                <li>Integrated scraped data into an LLM-powered RAG system, ranking RFPs for client relevance.</li>
+                <li>Developed FastAPI + React full-stack dashboard, enabling real-time visualization of municipal datasets.</li>
+                <li>Piloted with an enterprise client; approved by Canadian Government for funding.</li>
+            </ul>
+        </div>
+
+        <div class="job-experience">
+            <h3 class="job-title">Software Engineer Co-op</h3>
+            <p class="job-company">University of California, Irvine — Irvine, CA</p>
+            <p class="job-period">Jun 2022 – Jun 2025</p>
+            <ul class="job-description">
+                <li>Implemented Java/Gradle automation system; reduced manual reporting workload by 90% across 4 teams.</li>
+                <li>Designed RESTful API endpoints in Java, enabling full-stack integration and supporting 500+ weekly users.</li>
+                <li>Built a web scraping pipeline that centralized 10,000+ documents, cutting developer onboarding time by 30%.</li>
+                <li>Integrated React/Playwright test framework in CI/CD, lowering regression defects by 15%.</li>
+                <li>Created SQL/Java data anonymization tool for FERPA compliance, securing 30,000+ student records.</li>
+                <li>Automated repetitive workflows for BSAs by building custom scripting solutions, reducing time taken by 80%.</li>
+            </ul>
+        </div>
+
         <div class="job-experience">
             <h3 class="job-title">Undergraduate Researcher</h3>
-            <p class="job-company">He Lab, University of California, Irvine</p>
-            <p class="job-period">January 2024 - Present</p>
+            <p class="job-company">He Lab, UC Irvine — Irvine, CA</p>
+            <p class="job-period">Jan 2024 – Dec 2024</p>
             <ul class="job-description">
-                <li>Developed a deep-learning model using computer vision to predict nano-particle motion, enabling advancements in material science research (Pending paper publication).</li>
-                <li>Engineered and optimized a Python based CNN for electron microscopy analysis, achieving 95% accuracy in particle identification as well as developed my own scripts for data inference and preprocessing.</li>
-                <li>Created a synthetic data generation pipeline that can produce 10000+ realistic microscopy images, enabling robust model training and validation.</li>
+                <li>Produced deep-learning pipeline for nanoparticle motion prediction, contributing to a pending publication.</li>
+                <li>Trained CNN model for microscopic image analysis, achieving 91% accuracy on 10,000+ labeled samples.</li>
+                <li>Developed synthetic data generation pipeline to create labeled datasets, enabling robust model training.</li>
             </ul>
         </div>
+
     </div>
+
     
     <!-- Projects Section -->
     <div class="section" id="projectsSection">
